@@ -5,6 +5,7 @@ const CANVAS_SIZE = 320;
 const INITIAL_SPEED = 200;
 
 export default function MyCustomWidget() {
+  // State variables
   const [snake, setSnake] = useState([
     { x: 2, y: 0 },
     { x: 1, y: 0 },
@@ -27,6 +28,7 @@ export default function MyCustomWidget() {
   const gameCanvasRef = useRef(null);
 
   useEffect(() => {
+    // Game loop
     if (gameOver) {
       if (score > highScore) {
         setHighScore(score);
@@ -42,6 +44,7 @@ export default function MyCustomWidget() {
   }, [snake, speed, gameOver, score, highScore]);
 
   useEffect(() => {
+    // Event listener for keyboard input
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -68,6 +71,7 @@ export default function MyCustomWidget() {
   };
 
   const moveSnake = () => {
+    // Move the snake
     const head = { x: snake[0].x, y: snake[0].y };
 
     switch (direction) {
@@ -89,6 +93,7 @@ export default function MyCustomWidget() {
 
     const newSnake = [head, ...snake];
     if (head.x === food.x && head.y === food.y) {
+      // Snake eats the food
       setFood(getRandomFood());
       setSpeed(speed - 10);
       setScore(score + 1);
@@ -103,6 +108,7 @@ export default function MyCustomWidget() {
       head.x === CANVAS_SIZE / CELL_SIZE ||
       head.y === CANVAS_SIZE / CELL_SIZE
     ) {
+      // Snake collision or hitting the walls
       setGameOver(true);
     }
 
@@ -110,6 +116,7 @@ export default function MyCustomWidget() {
   };
 
   const isSnakeCollision = (head) => {
+    // Check if the snake collides with its own body
     for (let i = 1; i < snake.length; i++) {
       if (snake[i].x === head.x && snake[i].y === head.y) {
         return true;
@@ -119,6 +126,7 @@ export default function MyCustomWidget() {
   };
 
   const drawCell = (ctx, x, y) => {
+    // Draw a cell on the canvas
     ctx.fillStyle = "green";
     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     ctx.strokeStyle = "white";
@@ -126,12 +134,14 @@ export default function MyCustomWidget() {
   };
 
   const drawSnake = (ctx) => {
+    // Draw the snake on the canvas
     snake.forEach((cell) => {
       drawCell(ctx, cell.x, cell.y);
     });
   };
 
   const drawFood = (ctx) => {
+    // Draw the food on the canvas
     drawCell(ctx, food.x, food.y);
   };
 
@@ -141,6 +151,7 @@ export default function MyCustomWidget() {
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
     if (gameOver) {
+      // Game over screen
       ctx.font = "30px Arial";
       ctx.fillStyle = "red";
       ctx.textAlign = "center";
@@ -165,6 +176,7 @@ export default function MyCustomWidget() {
   };
 
   const handleRestart = () => {
+    // Restart the game
     setSnake([
       { x: 2, y: 0 },
       { x: 1, y: 0 },
@@ -179,6 +191,7 @@ export default function MyCustomWidget() {
   };
 
   useEffect(() => {
+    // Initial canvas rendering
     const canvas = gameCanvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!gameStarted) {
@@ -197,6 +210,7 @@ export default function MyCustomWidget() {
   }, [snake, food, gameOver, score, highScore]);
 
   useEffect(() => {
+    // Event listener for restarting the game after game over
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && gameOver) {
         handleRestart();
